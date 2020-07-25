@@ -7,5 +7,8 @@ git push git@github.com:rainlotus97/myvscode.git
 git pull --rebase origin master
 
 
-强制更新本地项目：
+第一次更新本地项目使用强制更新：
 git push -f origin master
+
+之后更新本地项目可以使用：
+git push origin master
