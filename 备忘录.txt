@@ -3,4 +3,9 @@ git commit -m "新的添加"
 git push git@github.com:rainlotus97/myvscode.git
 
 
-如果遇到错误reject之类信息：git pull --rebase origin master
+如果遇到错误reject之类信息：
+git pull --rebase origin master
+
+
+强制更新本地项目：
+git push -f origin master
