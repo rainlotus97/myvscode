@@ -6,7 +6,7 @@ class Student {
     constructor() {
         this.students = [];
         this.student_table = path.join(__dirname, "../db/student.json")
-
+        // this.student_table = path.join(__filename, "../../db/student.json")
     }
     // 获取全部学生
     list(cb) {
@@ -48,6 +48,7 @@ class Student {
             }
             // 没有错误，文件读取成功
             this.students = JSON.parse(data.toString())//读取原来的数据
+
             // 将新的学生添加到students
             if (this.students.length > 0) {
                 // 将新的学生的id是上一个学生的id+1
@@ -55,10 +56,23 @@ class Student {
             } else {
                 stu.id = 1;
             }
+
             this.students.push(stu)
             // 将this.students这个json对象写入this.students中
             let str = JSON.stringify(this.students)
             fs.writeFile(this.student_table, str, err => cb(err))
+
+            // for (const key of this.students) {
+            //     if (key.number != stu.number) {
+            //         this.students.push(stu)
+            //         // 将this.students这个json对象写入this.students中
+            //         let str = JSON.stringify(this.students)
+            //         fs.writeFile(this.student_table, str, err => cb(err))
+            //     } else {
+            //         cb("err")
+            //     }
+            // }
+
         })
     }
 

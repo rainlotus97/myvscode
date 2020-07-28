@@ -1,9 +1,10 @@
-const express=require('express')
+const express=require("express")
 const app =express()//创建一个express的web服务器
 
 app.get("/",(req,res)=>{
     res.send("aloha")
 })
+app.engine('html',require('express-art-template'))
 // 静态文件处理
 app.use(express.static('./public'))
 // 处理表单和json格式的参数

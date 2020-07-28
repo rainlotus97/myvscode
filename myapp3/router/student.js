@@ -6,7 +6,7 @@ const studentBiz=new Student()
 router.get('/list',(req,res)=>{
     // 调用业务层的list方法，获取全部学生信息
    studentBiz.list((data)=>{
-    res.send(data)
+    res.render("index.html",{data})
    })
 })
 

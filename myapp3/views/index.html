@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th>name</th>
+                <th>sex</th>
+                <th>phone</th>
+                <th>number</th>
+                <th>id</th>
+                <th><a href="">编辑</a><a href="">操作</a></th>
+            </tr>
+        </thead>
+        <tbody>
+            {{each data}}
+            <tr>
+
+                <td>{{$value.name}}</td>
+                <td>{{$value.sex}}</td>
+                <td>{{$value.phone}}</td>
+                <td>{{$value.number}}</td>
+                <td>{{$value.id}}</td>
+                <td></td>
+
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</body>
+
+</html>
