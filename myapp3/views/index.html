@@ -4,36 +4,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>学生</title>
+    <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.css" />
+    <script src="/node_modules/jquery/dist/jquery.js"></script>
+    <script src="/node_modules/bootstrap/dist/js/bootstrap.js"></script>
+
 </head>
 
 <body>
-    <table>
-        <thead>
-            <tr>
-                <th>name</th>
-                <th>sex</th>
-                <th>phone</th>
-                <th>number</th>
-                <th>id</th>
-                <th><a href="">编辑</a><a href="">操作</a></th>
-            </tr>
-        </thead>
-        <tbody>
-            {{each data}}
-            <tr>
+    <div class="container">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addModal">添加</button>
+        <table class="table table-dark" id="studentTable">
+            <thead class="text-center">
+                <tr>
+                    <th>name</th>
+                    <th>sex</th>
+                    <th>birth</th>
+                    <th>identity</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody class="text-center">
+                {{each data}}
+                <tr>
+                    <td>{{$value.name}}</td>
+                    <td>{{$value.sex}}</td>
+                    <td>{{$value.birth}}</td>
+                    <td>{{$value.identity}}</td>
+                    <td>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <button type="button" class="btn btn-secondary">编辑</button>
+                            <button type="button" class="btn btn-secondary deleteBtn" data-id="{{$value.id}}">删除</button>
+                        </div>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
 
-                <td>{{$value.name}}</td>
-                <td>{{$value.sex}}</td>
-                <td>{{$value.phone}}</td>
-                <td>{{$value.number}}</td>
-                <td>{{$value.id}}</td>
-                <td></td>
+        <!-- Modal -->
+        <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addModalLabel">添加老师</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
 
-            </tr>
-            {{/each}}
-        </tbody>
-    </table>
+                        <!-- 添加表单 -->
+                        <form id="addForm">
+                            <div class="item"><label for="name">姓名</label><input type="text" name="name" id="name">
+                            </div>
+                            <div class="item">性别:
+                                <label for="sex"><input type="radio" name="sex" value="男">男
+                                    <input type="radio" name="sex" value="女">女</label> 
+                            </div>
+                            <div class="item"><label for="sex">生日</label><input type="date" name="birth" id="birth">
+                            </div>
+                            <div class="item"><label for="identity">身份证号</label><input type="text" name="identity" id="phone">
+                            </div>
+                        </form>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary" id="addBtn">添加</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            // 当点击添加的按钮时，提交表单,发送请求到服务器
+            $("#addBtn").click(function () {
+                $.ajax({
+                    url: '/student/add',
+                    type: "post",
+                    data: $("#addForm").serialize(),
+                    success: function (resp) {
+                        console.log(resp)
+                        location.reload()
+                    },
+                    error: function (err) {
+                        console.log(err)
+                    }
+                })
+                
+            });
+
+            $("#studentTable").on("click",".deleteBtn",function(e){
+                let id=$(e.target).data("id")
+                $.ajax({
+                    url: `/student/delete/${id}`,
+                    type: "delete",
+                    success:function(resp){
+                        location.reload()
+                    },
+                    error: function (err) {
+                        console.log(err)
+                    }
+
+
+
+
+                })
+            })
+        });
+    </script>
 </body>
 
 </html>

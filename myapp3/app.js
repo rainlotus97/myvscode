@@ -4,6 +4,9 @@ const app =express()//创建一个express的web服务器
 app.get("/",(req,res)=>{
     res.send("aloha")
 })
+
+app.use("/node_modules",express.static('node_modules'))
+
 app.engine('html',require('express-art-template'))
 // 静态文件处理
 app.use(express.static('./public'))

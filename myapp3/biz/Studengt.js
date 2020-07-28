@@ -49,29 +49,25 @@ class Student {
             // 没有错误，文件读取成功
             this.students = JSON.parse(data.toString())//读取原来的数据
 
-            // 将新的学生添加到students
-            if (this.students.length > 0) {
-                // 将新的学生的id是上一个学生的id+1
-                stu.id = this.students.length + 1;
-            } else {
-                stu.id = 1;
+            let unique = this.students.every(item => {
+                return item.identity != stu.identity
+            })
+            if (unique) {
+                // 将新的学生添加到students
+                if (this.students.length > 0) {
+                    // 将新的学生的id是上一个学生的id+1
+                    stu.id = this.students[this.students.length-1].id + 1;
+                } else {
+                    stu.id = 1;
+                }
+
+                this.students.push(stu)
+                // 将this.students这个json对象写入this.students中
+                let str = JSON.stringify(this.students)
+                fs.writeFile(this.student_table, str, err => cb(err))
+            }else{
+                cb("身份重复，添加失败，请重输！")
             }
-
-            this.students.push(stu)
-            // 将this.students这个json对象写入this.students中
-            let str = JSON.stringify(this.students)
-            fs.writeFile(this.student_table, str, err => cb(err))
-
-            // for (const key of this.students) {
-            //     if (key.number != stu.number) {
-            //         this.students.push(stu)
-            //         // 将this.students这个json对象写入this.students中
-            //         let str = JSON.stringify(this.students)
-            //         fs.writeFile(this.student_table, str, err => cb(err))
-            //     } else {
-            //         cb("err")
-            //     }
-            // }
 
         })
     }
@@ -89,6 +85,8 @@ class Student {
             let temp = this.students.filter(item => {
                 return item.id != id
             })
+            
+            
             let str = JSON.stringify(temp)
             fs.writeFile(this.student_table, str, err => {
                 cb(err)
