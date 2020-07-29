@@ -9,7 +9,25 @@ router.get('/list',(req,res)=>{
     res.render("index.html",{data})
    })
 })
+router.get('/list/show',(req,res)=>{
+    // 调用业务层的list方法，获取全部学生信息
+   studentBiz.show((data)=>{
+    res.render("index.html",{data})
+   })
+})
 
+router.post('/search',(req,res)=>{
+    let obj=req.body;
+    let name= Object.keys(obj).toString()
+    studentBiz.getBySearch(name,(err,data)=>{
+        if(err){
+            res.send(err)
+        }else{
+            res.send(data)
+            console.log("search",data);
+        }
+    })
+})
 // 根据id查询一个对象
 router.get('/:id',(req,res)=>{
     let id=req.params.id;
@@ -32,8 +50,15 @@ router.post('/add',(req,res)=>{
 })
 
 router.put('/update',(req,res)=>{
-    let obj=req.body;
-    res.send(`你想要更新的信息是${obj.id},${obj.name},${obj.sex}`)
+    let stu=req.body;
+    studentBiz.Update(stu,err=>{
+        if(err){
+            res.send(err)
+        }else{
+            res.send("Success!")
+        }
+    })
+   
 })
 
 router.delete('/delete/:id',(req,res)=>{

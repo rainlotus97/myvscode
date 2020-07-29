@@ -14,6 +14,8 @@
 <body>
     <div class="container">
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addModal">添加</button>
+        <input type="text" placeholder="请在此输入信息" style="margin-left: 2em;" id="searchText">
+        <button style="width:4em;height:2em" id="searchBtn">搜索</button>
         <table class="table table-dark" id="studentTable">
             <thead class="text-center">
                 <tr>
@@ -33,8 +35,10 @@
                     <td>{{$value.identity}}</td>
                     <td>
                         <div class="btn-group btn-group-sm" role="group">
-                            <button type="button" class="btn btn-secondary">编辑</button>
-                            <button type="button" class="btn btn-secondary deleteBtn" data-id="{{$value.id}}">删除</button>
+                            <button type="button" class="btn btn-secondary updateBtn" data-id="{{$value.id}}"
+                                data-toggle="modal" data-target="#updateModal">更新</button>
+                            <button type="button" class="btn btn-secondary deleteBtn"
+                                data-id="{{$value.id}}">删除</button>
                         </div>
                     </td>
                 </tr>
@@ -42,13 +46,13 @@
             </tbody>
         </table>
 
-        <!-- Modal -->
+        <!-- 添加框 -->
         <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel"
             aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="addModalLabel">添加老师</h5>
+                        <h5 class="modal-title" id="addModalLabel">添加学生</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -61,14 +65,14 @@
                             </div>
                             <div class="item">性别:
                                 <label for="sex"><input type="radio" name="sex" value="男">男
-                                    <input type="radio" name="sex" value="女">女</label> 
+                                    <input type="radio" name="sex" value="女">女</label>
                             </div>
                             <div class="item"><label for="sex">生日</label><input type="date" name="birth" id="birth">
                             </div>
-                            <div class="item"><label for="identity">身份证号</label><input type="text" name="identity" id="phone">
+                            <div class="item"><label for="identity">身份证号</label><input type="text" maxlength="18" name="identity"
+                                    id="identity">
                             </div>
                         </form>
-
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
@@ -77,9 +81,53 @@
                 </div>
             </div>
         </div>
+
+        <!-- 更新框 -->
+        <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="updateModalLabel">修改信息</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <!-- 添加表单 -->
+                        <form id="updateForm">
+                            <div class="item"><label for="name">姓名</label><input type="text" name="name" id="name">
+                            </div>
+                            <div class="item">性别:
+                                <label for="sex"><input type="radio" name="sex" value="男">男
+                                    <input type="radio" name="sex" value="女">女</label>
+                            </div>
+                            <div class="item"><label for="sex">生日</label><input type="date" name="birth" id="birth">
+                            </div>
+                            <div class="item"><label for="identity">身份证号</label><input type="text" name="identity"
+                                    id="identity">
+                            </div>
+                            <input type="hidden" name="id" id="id">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary updateBtn1">提交</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <script>
         $(function () {
+           $("#identity").on("keypress",(e)=>{
+               if(e.keyCode=13){
+                $("#addBtn").click();
+                $(".updateBtn1").click()
+               }
+           })
+           
             // 当点击添加的按钮时，提交表单,发送请求到服务器
             $("#addBtn").click(function () {
                 $.ajax({
@@ -94,26 +142,90 @@
                         console.log(err)
                     }
                 })
-                
+
             });
 
-            $("#studentTable").on("click",".deleteBtn",function(e){
-                let id=$(e.target).data("id")
+            $("#studentTable").on("click", ".deleteBtn", function (e) {
+                let id = $(e.target).data("id")
                 $.ajax({
                     url: `/student/delete/${id}`,
                     type: "delete",
-                    success:function(resp){
+                    success: function (resp) {
                         location.reload()
                     },
                     error: function (err) {
                         console.log(err)
                     }
 
+                })
+            })
 
+            $("#studentTable").on("click", ".updateBtn", function (e) {
+                let id = $(e.target).data("id");
+                $.ajax({
+                    url: "/student/" + id,
+                    type: "get",
+                    success: (data) => {
+                        let stu = data;
 
+                        if (stu) {
+                            $("#updateForm #id").val(stu.id)
+                            $("#updateForm #name").val(stu.name)
+                            $("#updateForm #birth").val(stu.birth)
+                            $("#updateForm #identity").val(stu.identity)
+                            let r = $("#updateForm input[type=radio]")
+                            r.each(function () {
+                                if ($(this).val() == stu.sex) {
+                                    $(this).attr("checked", true)
+                                }
+                            })
+                        }
+                    },
+                    error: function (err) {
+                        console.log(err)
+                    }
 
                 })
             })
+
+            $(".updateBtn1").click(function () {
+                $.ajax({
+                    url: '/student/update',
+                    type: "put",
+                    data: $("#updateForm").serialize(),
+                    success: function (resp) {
+                        console.log(resp)
+                        location.reload()
+                    },
+                    error: function (err) {
+                        console.log(err)
+                    }
+                })
+
+            })
+
+            $("#searchText").on("keypress", function (e) {
+                if (e.keyCode == "13") {
+                    $("#searchBtn").click();
+                }
+            })
+            $("#searchBtn").on("click", function () {
+                var Text = $("#searchText").val();//文本框值  
+                $.ajax({
+                    url: "/student/search",
+                    type: "post",
+                    data: Text,
+                    success: function (resp) {
+                        console.log(resp)
+                        location.reload()
+                    },
+                    error: function (err) {
+                        console.log(err)
+                    }
+                })
+                window.open("http://localhost:3000/student/list/show");
+            })
+
         });
     </script>
 </body>
